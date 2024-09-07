@@ -1,0 +1,13 @@
+1. Gestionnaire de bibliothèque
+
+
+Description : Une application permettant de gérer une collection de livres. Tu peux ajouter, modifier, supprimer et rechercher des livres. 
+Chaque livre peut avoir des détails comme le titre, l'auteur, le genre, et l'année de publication.
+
+Fonctionnalités :
+
+
+Ajout, modification et suppression de livres.
+Recherche et filtrage de livres.
+Interface utilisateur avec des contrôles comme DataGrid, TextBox, et ComboBox.
+Persistance des données avec une base de données locale (SQLite) ou des fichiers JSON/XML.
