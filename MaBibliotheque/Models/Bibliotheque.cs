@@ -1,19 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Navigation;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace MaBibliotheque.Models
 {
-    public class Bibliotheque
+    public partial class Bibliotheque : ObservableObject
     {
-        private List<Book> books;
+        [ObservableProperty]
+        private List<Book> _books;
 
         public Bibliotheque()
         {
-            this.books = new();
+            Books = new();
         }
 
         public void AddBook(Book book)
@@ -21,7 +17,7 @@ namespace MaBibliotheque.Models
             // on ajoute le livre seulement s'il n'existe pas déja dans le liste
             if (BookExisting(book))
             {
-                books.Add(book);
+                Books.Add(book);
             }
         }
 
@@ -29,15 +25,13 @@ namespace MaBibliotheque.Models
         {
             if (BookExisting(book))
             {
-                books.Remove(book);
+                Books.Remove(book);
             }
         }
 
-        public List<Book> ListOfBook => books;
-
         public bool BookExisting(Book book)
         {
-            return books.Contains(book);
+            return Books.Contains(book);
         }
     }
 }

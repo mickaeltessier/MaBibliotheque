@@ -1,37 +1,35 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace MaBibliotheque.Models
 {
-    public class Book
+    public partial class Book : ObservableObject
     {
-        private Author? _author;
+        [ObservableProperty]
+        private Author _author;
+
+        [ObservableProperty]
+        private string _bookType; // Le type de livre peut être "Roman", "BD", "Magazine", etc.
+
+        [ObservableProperty]
         private string _title;
-        private float _price;
-        private int _publishYear;
-        private string _genre;
+
+        [ObservableProperty]
         private string _isbn; // L'ISBN est un numéro international normalisé permettant l'identification d'un livre dans une édition donnée
 
-        public Book(Author? author, string bookType, string title, float price, int publishYear)
+        [ObservableProperty]
+        private float _price;
+        
+        [ObservableProperty]
+        public int _publishYear;
+
+        public Book(Author author, string bookType, string title, string isbn, float price, int publishYear)
         {
-            _author = author;
-            _title = title;
-            _price = price;
-            _publishYear = publishYear;
-            _bookType = bookType;
+            Author = author;
+            BookType = bookType;
+            Title = title;
+            Isbn = isbn;
+            Price = price;
+            PublishYear = publishYear;
         }
-
-        public Author Author { get { return _author ??= new Author(0,"Auteur vide","Auteur vide"); } }
-
-        public string Title => _title;
-
-        public float Price => _price;
-
-        public int PublishYear => _publishYear;
-
-        public string BookType => _bookType;
     }
 }

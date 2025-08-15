@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,10 +7,15 @@ using System.Threading.Tasks;
 
 namespace MaBibliotheque.Models
 {
-    public class Author
+    public partial class Author : ObservableObject
     {
+        [ObservableProperty]
         private int _id;
+
+        [ObservableProperty]
         private string _firstName;
+
+        [ObservableProperty]
         private string _lastName;
 
         public Author(int id, string firstname, string lastname)
@@ -18,12 +24,5 @@ namespace MaBibliotheque.Models
             _firstName = firstname;
             _lastName = lastname;
         }
-
-        public int Id => _id;
-
-        public string FirstName => _firstName;
-
-        public string LastName => _lastName;
-
     }
 }
