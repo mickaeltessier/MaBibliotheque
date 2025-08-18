@@ -33,7 +33,7 @@
                 <TextBlock Text="Auteur:"/>
                 
                 <DockPanel Margin="0,5,0,10">
-                    <ComboBox DockPanel.Dock="Left" ItemsSource="{Binding Authors}" SelectedItem="{Binding SelectedAuthor}" Name="AuthorListBox" Width="200" Height="20">
+                    <ComboBox DockPanel.Dock="Left" ItemsSource="{Binding Authors}" SelectedItem="{Binding Author}" Name="AuthorListBox" Width="200" Height="20">
                         <ComboBox.ItemTemplate>
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal">
@@ -57,6 +57,7 @@
                 <TextBox Name="Price" Text="{Binding Price}" Margin="0,5,0,10"/>
                 <TextBlock Text="ISBN:"/>
                 <TextBox Name="Isbn" Text="{Binding Isbn}" Margin="0,5,0,10"/>
+                
                 <Button Content="Ajouter" Command="{Binding AddBookCommand}" HorizontalAlignment="Center"/>
             </StackPanel>
         </Border>

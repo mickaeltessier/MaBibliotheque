@@ -6,18 +6,21 @@ using MaBibliotheque.Views.SubView;
 using Microsoft.Extensions.DependencyInjection;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
+using System.Runtime.CompilerServices;
 
 namespace MaBibliotheque.ViewModels
 {
-    public partial class AddAuthorViewModel(ILibraryService libraryService) : ObservableValidator
+    public partial class AddAuthorViewModel(ILibraryService libraryService, INavigationService navigationService) : ObservableValidator
     {
         #region Variables
 
         protected Author Author = new (0, string.Empty, string.Empty);
 
         private readonly ILibraryService _libraryService = libraryService;
+        private readonly INavigationService _navigationService = navigationService;
 
         [Required(ErrorMessage = "Le nom de l'auteur est obligatoire.")]
+        [AllowedValues(typeof(string))]
         public string FirstName
         {
             get => Author.FirstName;
@@ -28,6 +31,7 @@ namespace MaBibliotheque.ViewModels
         }
 
         [Required(ErrorMessage = "Le prénom de l'auteur est obligatoire.")]
+        [AllowedValues(typeof(string))]
         public string LastName
         {
             get => Author.LastName;
@@ -44,7 +48,12 @@ namespace MaBibliotheque.ViewModels
         [RelayCommand]
         public void AddAuthor()
         {
-            _libraryService.AddAuthor(Author);
+            // Valider les données avant d'ajouter
+            ValidateAllProperties();
+            if (HasErrors) return;
+
+            if (_libraryService.AddAuthor(Author))
+                _navigationService.CloseWindow <AddAuthorViewModel>();
         }
 
         #endregion

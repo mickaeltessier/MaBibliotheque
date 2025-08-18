@@ -34,7 +34,7 @@ namespace MaBibliotheque.Models
 
         public override string ToString()
         {
-            return $"{Title} ({PublishYear}) - {Author.FirstName} {Author.LastName}";
+            return $"{Title} -  {Author.FirstName} {Author.LastName} - ({PublishYear})";
         }
 
         public override bool Equals(object? obj)
