@@ -1,5 +1,10 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using MaBibliotheque.Services.Interface;
 using System.Windows;
+using MaBibliotheque.Services;
+using MaBibliotheque.Views;
+using MaBibliotheque.Views.SubView;
+using MaBibliotheque.ViewModels;
 
 namespace MaBibliotheque
 {
@@ -22,15 +27,29 @@ namespace MaBibliotheque
             ServiceProvider = services.BuildServiceProvider();
 
             // Show the main window
-            var mainWindow = ServiceProvider.GetRequiredService<Views.LibraryView>();
-            mainWindow.Show();
+            ServiceProvider.GetService<INavigationService>()?.ShowWindow<LibraryView>();
+            //var mainWindow = ServiceProvider.GetRequiredService<LibraryView>();
+            //mainWindow.Show();
+
+            // Ajout de l'événement de fermeture
+            Current.ShutdownMode = ShutdownMode.OnMainWindowClose;
         }
 
-        private void ConfigureServices(ServiceCollection services)
+        private static void ConfigureServices(ServiceCollection services)
         {
-            services.AddTransient<ViewModels.LibraryViewModel>();
-            services.AddTransient<ViewModels.AddBookViewModel>();
-            services.AddTransient<Views.LibraryView>();
+            // Ajout des services
+            services.AddSingleton<ILibraryService, LibraryService>();
+            services.AddSingleton<INavigationService, NavigationService>();
+
+            // Ajout des ViewModels
+            services.AddTransient<LibraryViewModel>();
+            services.AddTransient<AddBookViewModel>();
+            services.AddTransient<AddAuthorViewModel>();
+
+            // Ajout des vues et des sub views
+            services.AddTransient<LibraryView>();
+            services.AddTransient<AddAuthorView>();
+            services.AddTransient<AddBookView>();
         }
     }
 }

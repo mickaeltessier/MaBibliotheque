@@ -1,28 +1,39 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
 
 namespace MaBibliotheque.Models
 {
-    public partial class Author : ObservableObject
+    public partial class Author(int id, string firstName, string lastName) : ObservableObject
     {
         [ObservableProperty]
-        private int _id;
+        [Key]
+        private int _id = id; // logique qui sera gerer une fois la base de données implémentée
 
         [ObservableProperty]
-        private string _firstName;
+        private string _firstName = firstName;
 
         [ObservableProperty]
-        private string _lastName;
+        private string _lastName = lastName;
 
-        public Author(int id, string firstname, string lastname)
+        public override string ToString()
         {
-            _id = id;
-            _firstName = firstname;
-            _lastName = lastname;
+            return $"{FirstName} {LastName}";
+        }
+
+        public override bool Equals(object? obj)
+        {
+            if (obj is Author author)
+            {
+                return Id == author.Id &&
+                       FirstName == author.FirstName &&
+                       LastName == author.LastName;
+            }
+            return false;
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Id, FirstName, LastName);
         }
     }
 }

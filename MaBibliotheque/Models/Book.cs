@@ -18,7 +18,7 @@ namespace MaBibliotheque.Models
 
         [ObservableProperty]
         private float _price;
-        
+
         [ObservableProperty]
         public int _publishYear;
 
@@ -30,6 +30,30 @@ namespace MaBibliotheque.Models
             Isbn = isbn;
             Price = price;
             PublishYear = publishYear;
+        }
+
+        public override string ToString()
+        {
+            return $"{Title} ({PublishYear}) - {Author.FirstName} {Author.LastName}";
+        }
+
+        public override bool Equals(object? obj)
+        {
+            if (obj is Book book)
+            {
+                return Author.Equals(book.Author) &&
+                       BookType == book.BookType &&
+                       Title == book.Title &&
+                       Isbn == book.Isbn &&
+                       Price == book.Price &&
+                       PublishYear == book.PublishYear;
+            }
+            return false;
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Author, BookType, Title, Isbn, Price, PublishYear);
         }
     }
 }

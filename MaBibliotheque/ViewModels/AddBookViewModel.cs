@@ -1,14 +1,34 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using MaBibliotheque.Models;
+using MaBibliotheque.Services.Interface;
+using MaBibliotheque.Views.SubView;
+using Microsoft.Extensions.DependencyInjection;
+using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
+using System.Windows;
+using System.Windows.Navigation;
 
 namespace MaBibliotheque.ViewModels
 {
-    public partial class AddBookViewModel : ObservableValidator
+    public partial class AddBookViewModel(ILibraryService libraryService, INavigationService navigationService) : ObservableValidator
     {
-        protected Book Book;
+        #region Variables
 
+        protected Book Book = new
+            (
+                new Author(0, string.Empty, string.Empty),
+                string.Empty,
+                string.Empty,
+                "0000000000",
+                0.0f,
+                DateTime.Now.Year
+            );
+
+        private readonly ILibraryService _libraryService = libraryService;
+        private readonly INavigationService _navigationService = navigationService;
+
+        public ObservableCollection<Author> Authors => _libraryService.Authors;
 
         [Required(ErrorMessage = "Les informations à propos de l'auteur sont obligatoires")]
         public Author Author
@@ -40,8 +60,9 @@ namespace MaBibliotheque.ViewModels
             }
         }
 
-
-        [AllowedValues(typeof(string))]
+        [StringLength(13, MinimumLength = 10, ErrorMessage = "L'ISBN doit contenir entre 10 et 13 caractères.")]
+        [RegularExpression(@"^\d{10}(\d{3})?$", ErrorMessage = "L'ISBN doit être composé de 10 ou 13 chiffres.")]
+        [Required(ErrorMessage = "L'ISBN est obligatoire.")]
         public string Isbn
         {
             get => Book.Isbn;
@@ -72,26 +93,28 @@ namespace MaBibliotheque.ViewModels
             }
         }
 
-        private readonly LibraryViewModel _libraryViewModel;
+        #endregion
 
-        public AddBookViewModel(LibraryViewModel libraryViewModel)
+        #region Methods
+
+        [RelayCommand]
+        private void AddBook()
         {
-            _libraryViewModel = libraryViewModel;
-            Book = new Book
-            (
-                new Author(0, string.Empty, string.Empty),
-                string.Empty,
-                string.Empty,
-                string.Empty,
-                0.0f,
-                DateTime.Now.Year
-            );
+            // Valider les données avant d'ajouter
+            ValidateAllProperties();
+            if (HasErrors) return;
+
+            // Tenter d'ajouter le livre
+            if (_libraryService.AddBook(Book))
+                _navigationService.CloseWindow<AddBookViewModel>();
         }
 
         [RelayCommand]
-        public void AddBook()
+        public void OpenAddAuthorView()
         {
-            _libraryViewModel.AddBook(Book);
+            _navigationService.ShowWindow<AddAuthorView>();
         }
+
+        #endregion
     }
 }

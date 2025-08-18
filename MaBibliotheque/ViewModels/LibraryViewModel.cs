@@ -1,67 +1,49 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using MaBibliotheque.Models;
 using CommunityToolkit.Mvvm.ComponentModel;
-using MaBibliotheque.Views;
+using MaBibliotheque.Services.Interface;
 using Microsoft.Extensions.DependencyInjection;
+using System.Collections.ObjectModel;
+using MaBibliotheque.Views.SubView;
 
 namespace MaBibliotheque.ViewModels
 {
     public partial class LibraryViewModel : ObservableObject
     {
-        private AddBookView addBookView;
+        private readonly ILibraryService _libraryService;
+        private readonly INavigationService _navigationService;
 
-        [ObservableProperty]
-        private List<Book> _books;
-
-        [ObservableProperty]
-        private List<Author> _authors;
+        private ObservableCollection<Book> Books => _libraryService.Books;
 
         [ObservableProperty]
         private Book? _selectedBook;
-        public LibraryViewModel()
+
+        public LibraryViewModel(ILibraryService libraryService, INavigationService navigationService)
         {
-            Books = new List<Book>();
-            Authors = new List<Author>();
+            _libraryService = libraryService;
+            _navigationService = navigationService;
+            _libraryService.InitializeLibrary();
         }
 
-        public void AddBook(Book book)
-        {
-            Books.Add(book);
-        }
-
-        public void AddAuthor(Author author)
-        {
-            Authors.Add(author);
-        }
-
+        // Remplacement de la méthode OpenAddBookView pour corriger CS0120
         [RelayCommand]
         public void OpenAddBookView()
         {
-            if(addBookView != null && addBookView.IsVisible)
-            {
-                // Si la fenêtre est déjà ouverte, on l'affiche au premier plan
-                addBookView.Activate();
-                return;
-            }
-
-            addBookView = new AddBookView()
-            {
-                DataContext = App.ServiceProvider.GetRequiredService<AddBookViewModel>()
-            };
-            addBookView.Show();
+            _navigationService.ShowWindow<AddBookView>();
         }
 
         [RelayCommand]
         private void DeleteBook()
         {
-            Books.Remove(SelectedBook);
+            if (SelectedBook != null)
+                _libraryService.RemoveBook(SelectedBook);
         }
 
-        private void EditBook()
+        [RelayCommand]
+        private static void EditBook()
         {
             // On ouvre à nouveau la page de nouveau book et on rempli avec les valeurs que l'on connais du book
             return;
         }
-
     }
 }
