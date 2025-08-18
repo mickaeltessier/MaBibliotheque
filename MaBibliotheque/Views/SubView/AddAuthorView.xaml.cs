@@ -4,11 +4,11 @@ using MahApps.Metro.Controls;
 namespace MaBibliotheque.Views.SubView
 {
     /// <summary>
-    /// Logique d'interaction pour AddBook.xaml
+    /// Logique d'interaction pour AddAuthorView.xaml
     /// </summary>
-    public partial class AddBookView : MetroWindow
+    public partial class AddAuthorView : MetroWindow
     {
-        public AddBookView(AddBookViewModel vm)
+        public AddAuthorView(AddAuthorViewModel vm)
         {
             InitializeComponent();
             DataContext = vm;
