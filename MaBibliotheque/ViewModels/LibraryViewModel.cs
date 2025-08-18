@@ -13,7 +13,7 @@ namespace MaBibliotheque.ViewModels
         private readonly ILibraryService _libraryService;
         private readonly INavigationService _navigationService;
 
-        private ObservableCollection<Book> Books => _libraryService.Books;
+        public ObservableCollection<Book> Books => _libraryService.Books;
 
         [ObservableProperty]
         private Book? _selectedBook;

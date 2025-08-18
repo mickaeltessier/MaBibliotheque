@@ -25,7 +25,7 @@
             <Button Content="Supprimer un livre" Command="{Binding DeleteBookCommand}" Margin="5"/>
             <Button Content="Modifier un livre" Command="{Binding EditBookCommand}" Margin="5"/>
         </StackPanel>
-        <ListView Name="BooksListView" Grid.Row="1" Margin="10" ItemsSource="{Binding Books}">
+        <ListView Name="BooksListView" Grid.Row="1" Margin="10" ItemsSource="{Binding Books}" SelectedItem="{Binding SelectedBook}">
             <ListView.View>
                 <GridView>
                     <GridViewColumn Header="Titre" DisplayMemberBinding="{Binding Title}" Width="200"/>
