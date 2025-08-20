@@ -58,7 +58,7 @@
                 <TextBlock Text="ISBN:"/>
                 <TextBox Name="Isbn" Text="{Binding Isbn}" Margin="0,5,0,10"/>
                 
-                <Button Content="Ajouter" Command="{Binding AddBookCommand}" HorizontalAlignment="Center"/>
+                <Button Content="Ajouter" Command="{Binding SaveCommand}" HorizontalAlignment="Center"/>
             </StackPanel>
         </Border>
     </Grid>

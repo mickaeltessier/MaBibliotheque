@@ -29,15 +29,25 @@ namespace MaBibliotheque.Services
 
         public bool BookExists(Book book)
         {
-            return Books.Any(b => b.Equals(book));
+            return Books.Contains(book);// Books.Any(b => b.Equals(book));
         }
 
-        public void EditBook(Book book)
+        public bool EditBook(Book oldBook,Book newBook)
         {
-            if (Books.Contains(book))
+            if (BookExists(newBook))
+                return false;
+            if (oldBook == newBook) return false; // No need to edit if the old book is the same as the new book
+            else if (Books.Contains(oldBook))
             {
-                // Logic to edit the book can be added here.
+                int index = Books.IndexOf(oldBook);
+                Books[index] = newBook; // Replace the old book with the new book
             }
+            else
+            {
+                return false; // Old book not found in the collection
+            }
+
+            return true;
         }
 
         public void RemoveBook(Book book)

@@ -13,7 +13,7 @@ namespace MaBibliotheque.Services.Interface
 
 
         bool AddBook(Book book);
-        void EditBook(Book book);
+        bool EditBook(Book oldBook,Book newBook);
         bool BookExists(Book book);
         void RemoveBook(Book book);
         bool AddAuthor(Author author);

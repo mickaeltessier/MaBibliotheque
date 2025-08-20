@@ -2,7 +2,6 @@
 using MaBibliotheque.Models;
 using CommunityToolkit.Mvvm.ComponentModel;
 using MaBibliotheque.Services.Interface;
-using Microsoft.Extensions.DependencyInjection;
 using System.Collections.ObjectModel;
 using MaBibliotheque.Views.SubView;
 
@@ -25,7 +24,6 @@ namespace MaBibliotheque.ViewModels
             _libraryService.InitializeLibrary();
         }
 
-        // Remplacement de la méthode OpenAddBookView pour corriger CS0120
         [RelayCommand]
         public void OpenAddBookView()
         {
@@ -40,10 +38,12 @@ namespace MaBibliotheque.ViewModels
         }
 
         [RelayCommand]
-        private static void EditBook()
+        private void EditBook()
         {
-            // On ouvre à nouveau la page de nouveau book et on rempli avec les valeurs que l'on connais du book
-            return;
+            if (SelectedBook != null)
+            {
+                _navigationService.ShowWindow<AddBookView>(SelectedBook);
+            }
         }
     }
 }

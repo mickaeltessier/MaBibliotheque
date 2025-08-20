@@ -3,15 +3,14 @@ using CommunityToolkit.Mvvm.Input;
 using MaBibliotheque.Models;
 using MaBibliotheque.Services.Interface;
 using MaBibliotheque.Views.SubView;
-using Microsoft.Extensions.DependencyInjection;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.Windows;
-using System.Windows.Navigation;
+using MaBibliotheque.ViewModels.Interface;
 
 namespace MaBibliotheque.ViewModels
 {
-    public partial class AddBookViewModel(ILibraryService libraryService, INavigationService navigationService) : ObservableValidator
+    public partial class AddBookViewModel(ILibraryService libraryService, INavigationService navigationService) : ObservableValidator, IParameterReceiver
     {
         #region Variables
 
@@ -25,8 +24,11 @@ namespace MaBibliotheque.ViewModels
                 DateTime.Now.Year
             );
 
+        protected Book? BookToEdit;
+
         private readonly ILibraryService _libraryService = libraryService;
         private readonly INavigationService _navigationService = navigationService;
+        private bool _isEditMode;
 
         public ObservableCollection<Author> Authors => _libraryService.Authors;
 
@@ -97,22 +99,51 @@ namespace MaBibliotheque.ViewModels
 
         #region Methods
 
-        [RelayCommand]
-        private void AddBook()
+        public void Initialize(object parameter)
         {
-            // Valider les données avant d'ajouter
-            ValidateAllProperties();
-            if (HasErrors) return;
+            if (parameter is Book bookToEdit)
+            {
+                _isEditMode = true;
+                // Copier les valeurs du livre à éditer
+                Author = bookToEdit.Author;
+                BookType = bookToEdit.BookType;
+                Title = bookToEdit.Title;
+                Isbn = bookToEdit.Isbn;
+                Price = bookToEdit.Price;
+                PublishYear = bookToEdit.PublishYear;
 
-            // Tenter d'ajouter le livre
-            if (_libraryService.AddBook(Book))
-                _navigationService.CloseWindow<AddBookViewModel>();
+                // Stocker le livre à éditer pour l'utiliser lors de la sauvegarde
+                BookToEdit = bookToEdit;
+            }
         }
 
         [RelayCommand]
         public void OpenAddAuthorView()
         {
             _navigationService.ShowWindow<AddAuthorView>();
+        }
+
+        [RelayCommand]
+        private void Save()
+        {
+            if (HasErrors) return;
+
+            if (_isEditMode)
+            {
+                if(BookToEdit == null)
+                {
+                    MessageBox.Show("Aucun livre à éditer n'a été trouvé.", "Erreur", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+                
+                if(_libraryService.EditBook(BookToEdit,Book))
+                    _navigationService.CloseWindow<AddBookViewModel>();
+            }
+            else
+            {
+                if(_libraryService.AddBook(Book))
+                    _navigationService.CloseWindow<AddBookViewModel>();
+            }
         }
 
         #endregion
