@@ -2,11 +2,7 @@
 using CommunityToolkit.Mvvm.Input;
 using MaBibliotheque.Models;
 using MaBibliotheque.Services.Interface;
-using MaBibliotheque.Views.SubView;
-using Microsoft.Extensions.DependencyInjection;
-using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
-using System.Runtime.CompilerServices;
 
 namespace MaBibliotheque.ViewModels
 {
@@ -20,7 +16,8 @@ namespace MaBibliotheque.ViewModels
         private readonly INavigationService _navigationService = navigationService;
 
         [Required(ErrorMessage = "Le nom de l'auteur est obligatoire.")]
-        [AllowedValues(typeof(string))]
+        [RegularExpression(@"^[a-zA-Z]+$", ErrorMessage = "Le nom ne doit contenir que des lettres.")]
+        [Display(Name = "Nom de l'auteur")]
         public string FirstName
         {
             get => Author.FirstName;
@@ -31,7 +28,8 @@ namespace MaBibliotheque.ViewModels
         }
 
         [Required(ErrorMessage = "Le prénom de l'auteur est obligatoire.")]
-        [AllowedValues(typeof(string))]
+        [RegularExpression(@"^[a-zA-Z]+$", ErrorMessage = "Le prénom ne doit contenir que des lettres.")]
+        [Display(Name = "Prénom de l'auteur")]
         public string LastName
         {
             get => Author.LastName;
