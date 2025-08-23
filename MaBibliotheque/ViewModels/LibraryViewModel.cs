@@ -21,6 +21,7 @@ namespace MaBibliotheque.ViewModels
         {
             _libraryService = libraryService;
             _navigationService = navigationService;
+
             _libraryService.InitializeLibrary();
         }
 

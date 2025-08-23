@@ -12,8 +12,8 @@ namespace MaBibliotheque.Services.Interface
         void InitializeLibrary();
 
 
-        bool AddBook(Book book);
-        bool EditBook(Book oldBook,Book newBook);
+        Task<bool> AddBookAsync(Book book);
+        Task<bool> EditBookAsync(Book oldBook,Book newBook);
         bool BookExists(Book book);
         void RemoveBook(Book book);
         bool AddAuthor(Author author);

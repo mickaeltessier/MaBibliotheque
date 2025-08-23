@@ -1,40 +1,46 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MaBibliotheque.Models
 {
-    public partial class Book : ObservableObject
+    public partial class Book
     {
-        [ObservableProperty]
-        private Author _author;
+        [Key]
+        public int Id { get; set; }
 
-        [ObservableProperty]
-        private string _bookType; // Le type de livre peut être "Roman", "BD", "Magazine", etc.
+        // Clé étrangère vers Author
+        public int AuthorId { get; set; }
 
-        [ObservableProperty]
-        private string _title;
+        [Required]
+        public Author Author { get; set; }
 
-        [ObservableProperty]
-        private string _isbn; // L'ISBN est un numéro international normalisé permettant l'identification d'un livre dans une édition donnée
+        public string BookType { get; set; } // "Roman", "BD", etc.
 
-        [ObservableProperty]
-        private float _price;
+        [Required]
+        public string Title { get; set; }
 
-        [ObservableProperty]
-        public int _publishYear;
+        public string Isbn { get; set; }
+
+        public float Price { get; set; }
+
+        public int PublishYear { get; set; }
+
+        private Book() { } // Constructeur par défaut pour Entity Framework ou d'autres usages
 
         public Book(Author author, string bookType, string title, string isbn, float price, int publishYear)
         {
-            Author = author;
-            BookType = bookType;
-            Title = title;
-            Isbn = isbn;
-            Price = price;
-            PublishYear = publishYear;
+            this.Author = author;
+            this.BookType = bookType;
+            this.Title = title;
+            this.Isbn = isbn;
+            this.Price = price;
+            this.PublishYear = publishYear;
         }
 
         public override string ToString()
         {
-            return $"{Title} -  {Author.FirstName} {Author.LastName} - ({PublishYear})";
+            return $"{Title} -  {this.Author.FirstName} {this.Author.LastName} - ({PublishYear})";
         }
 
         public override bool Equals(object? obj)

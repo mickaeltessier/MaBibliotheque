@@ -5,6 +5,11 @@ using MaBibliotheque.Services;
 using MaBibliotheque.Views;
 using MaBibliotheque.Views.SubView;
 using MaBibliotheque.ViewModels;
+using Microsoft.EntityFrameworkCore;
+using MaBibliotheque.Data;
+using MaBibliotheque.Repository.Interface;
+using MaBibliotheque.Models;
+using MaBibliotheque.Repository;
 
 namespace MaBibliotheque
 {
@@ -37,6 +42,14 @@ namespace MaBibliotheque
 
         private static void ConfigureServices(ServiceCollection services)
         {
+            // Ajout des DataBase Context
+            services.AddDbContext<AppDbContext>();
+
+            // Ajout des Repository
+            services.AddScoped<IRepository<Book>, Repository<Book>>();
+            services.AddScoped<IRepository<Author>, Repository<Author>>();
+            services.AddScoped<IBookRepository, BookRepository>();
+
             // Ajout des services
             services.AddSingleton<ILibraryService, LibraryService>();
             services.AddSingleton<INavigationService, NavigationService>();
@@ -50,6 +63,7 @@ namespace MaBibliotheque
             services.AddTransient<LibraryView>();
             services.AddTransient<AddAuthorView>();
             services.AddTransient<AddBookView>();
+
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using MaBibliotheque.Models;
+using MaBibliotheque.Repository.Interface;
 using MaBibliotheque.Services.Interface;
 using System.ComponentModel.DataAnnotations;
 
@@ -10,7 +11,7 @@ namespace MaBibliotheque.ViewModels
     {
         #region Variables
 
-        protected Author Author = new (0, string.Empty, string.Empty);
+        protected Author Author = new (string.Empty, string.Empty);
 
         private readonly ILibraryService _libraryService = libraryService;
         private readonly INavigationService _navigationService = navigationService;

@@ -25,7 +25,17 @@
             <Button Content="Supprimer un livre" Command="{Binding DeleteBookCommand}" Margin="5"/>
             <Button Content="Modifier un livre" Command="{Binding EditBookCommand}" Margin="5"/>
         </StackPanel>
-        <ListView Name="BooksListView" Grid.Row="1" Margin="10" ItemsSource="{Binding Books}" SelectedItem="{Binding SelectedBook}">
+        <ListView Name="BooksListView" Grid.Row="1" Margin="10" ItemsSource="{Binding Books, UpdateSourceTrigger=PropertyChanged, BindsDirectlyToSource=True}" SelectedItem="{Binding SelectedBook}" IsSynchronizedWithCurrentItem="True">
+            <ListView.Style>
+                <Style TargetType="ListView">
+                    <Setter Property="FontSize" Value="12"/>
+                    <Setter Property="Background" Value="#FFF0F0F0"/>
+                    <Setter Property="BorderBrush" Value="#FFB0B0B0"/>
+                    <Setter Property="BorderThickness" Value="2"/>
+                    <Setter Property="Padding" Value="5"/>
+                </Style>
+            </ListView.Style>
+
             <ListView.View>
                 <GridView>
                     <GridViewColumn Header="Titre" DisplayMemberBinding="{Binding Title}" Width="200"/>
