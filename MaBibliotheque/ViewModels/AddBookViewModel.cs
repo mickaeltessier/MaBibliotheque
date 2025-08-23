@@ -16,7 +16,7 @@ namespace MaBibliotheque.ViewModels
 
         protected Book Book = new
             (
-                new Author(0, string.Empty, string.Empty),
+                new Author(string.Empty, string.Empty),
                 string.Empty,
                 string.Empty,
                 "0000000000",
@@ -24,12 +24,15 @@ namespace MaBibliotheque.ViewModels
                 DateTime.Now.Year
             );
 
+        // Stocke le livre à éditer si on est en mode édition
         protected Book? BookToEdit;
+
+        // Indique si on est en mode édition ou ajout
+        private bool _isEditMode;
 
         private readonly ILibraryService _libraryService = libraryService;
         private readonly INavigationService _navigationService = navigationService;
-        private bool _isEditMode;
-
+        
         public ObservableCollection<Author> Authors => _libraryService.Authors;
 
         [Required(ErrorMessage = "Les informations à propos de l'auteur sont obligatoires")]
@@ -136,12 +139,12 @@ namespace MaBibliotheque.ViewModels
                     return;
                 }
                 
-                if(_libraryService.EditBook(BookToEdit,Book))
+                if(_libraryService.EditBookAsync(BookToEdit,Book).Result)
                     _navigationService.CloseWindow<AddBookViewModel>();
             }
             else
             {
-                if(_libraryService.AddBook(Book))
+                if (_libraryService.AddBookAsync(Book).Result)
                     _navigationService.CloseWindow<AddBookViewModel>();
             }
         }

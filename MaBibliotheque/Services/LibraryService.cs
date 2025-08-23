@@ -1,58 +1,97 @@
+using CommunityToolkit.Mvvm.ComponentModel;
+using MaBibliotheque.Data;
 using MaBibliotheque.Models;
+using MaBibliotheque.Repository;
+using MaBibliotheque.Repository.Interface;
 using MaBibliotheque.Services.Interface;
 using System.Collections.ObjectModel;
-using System.Linq;
 
 namespace MaBibliotheque.Services
 {
-    public class LibraryService : ILibraryService
+    public partial class LibraryService(AppDbContext dbContext, IBookRepository bookWithAuthorRepository, IRepository<Book> bookRepository, IRepository<Author> authorRepository) : ObservableObject, ILibraryService
     {
-        public ObservableCollection<Book> Books { get; } = [];
-        public ObservableCollection<Author> Authors { get; } = [];
+        private readonly Repository<Book> _bookRepository = (Repository<Book>)bookRepository;
+        private readonly Repository<Author> _authorRepository = (Repository<Author>)authorRepository;
 
-        public bool AddBook(Book book)
+        private readonly AppDbContext _dbContext = dbContext;
+        private readonly IBookRepository _bookWithAuthorRepository = bookWithAuthorRepository;
+
+        public ObservableCollection<Book> Books { get; set; } = [];
+
+        public ObservableCollection<Author> Authors { get; private set; } = [];
+
+        public async void InitializeLibrary()
+        {
+            await LoadBooksAsync();
+            await LoadAuthorsAsync();
+        }
+
+        private async Task LoadAuthorsAsync()
+        {
+            var authorsList = _authorRepository.GetAll();
+            Authors = new ObservableCollection<Author>(authorsList);
+
+            Authors.Clear();
+            foreach (var author in authorsList)
+            {
+                Authors.Add(author);
+            }
+        }
+
+        public async Task<bool> AddBookAsync(Book book)
         {
             if (book == null || BookExists(book))
                 return false;
 
-            Books.Add(book);
-            return true;
-        }
+            _dbContext.Books.Add(book); // Add the book to the database
+            _dbContext.SaveChanges(); // Save changes to the database
 
-        public void InitializeLibrary()
-        {
-            // This method can be used to initialize the library with some default books and authors.
-            // For example, you can add some sample books and authors here.
-            AddAuthor(new Author(1, "Aucun", "Auteur"));
-            AddAuthor(new Author(2, "dqzdjzlfqejfjeqdlqzjdkzqkdjlfqefjklqzkflqzjdfkzqjkdlzj", "djqehdkjqedjkqedjzqnjdkqhdjk"));
+            await LoadBooksAsync();
+
+            return true;
         }
 
         public bool BookExists(Book book)
         {
-            return Books.Contains(book);// Books.Any(b => b.Equals(book));
+            return _dbContext.Books.Any(b => b.Equals(book));
         }
 
-        public bool EditBook(Book oldBook,Book newBook)
+        public async Task<bool> EditBookAsync(Book oldBook,Book newBook)
         {
             if (BookExists(newBook))
                 return false;
+
             if (oldBook == newBook) return false; // No need to edit if the old book is the same as the new book
             else if (Books.Contains(oldBook))
             {
-                int index = Books.IndexOf(oldBook);
-                Books[index] = newBook; // Replace the old book with the new book
+                newBook.Id = oldBook.Id;
+                _bookRepository.Update(newBook);
             }
             else
             {
                 return false; // Old book not found in the collection
             }
 
+            await LoadBooksAsync();
+
             return true;
+        }
+
+        public async Task LoadBooksAsync()
+        {
+            var booksFromDb = _bookWithAuthorRepository.GetBooksWithAuthors();
+
+            Books.Clear();
+            foreach (var book in booksFromDb)
+                Books.Add(book);
         }
 
         public void RemoveBook(Book book)
         {
-            Books.Remove(book);
+            _dbContext.Books.Remove(book);
+            _dbContext.SaveChanges();
+
+            LoadBooksAsync();
         }
 
         public bool AddAuthor(Author author)
@@ -60,15 +99,19 @@ namespace MaBibliotheque.Services
             if (author == null || AuthorExists(author))
                 return false;
 
-            Authors.Add(author);
+            _dbContext.Authors.Add(author); // Add the new author to the database
+            _dbContext.SaveChanges(); // Save changes to the database
+
+            LoadAuthorsAsync();
             return true;
         }
 
         public bool AuthorExists(Author author)
         {
-            return Authors.Any(a => a.Equals(author));
+            return _dbContext.Authors.Any(a => a.Equals(author));
         }
 
+        // Methode pas encore implémenter
         public void EditAuthor(Author author)
         {
             if (Authors.Contains(author))
@@ -79,7 +122,10 @@ namespace MaBibliotheque.Services
 
         public void RemoveAuthor(Author author)
         {
-            Authors.Remove(author);
+            _dbContext.Authors.Remove(author);
+            _dbContext.SaveChanges();
+
+            LoadAuthorsAsync();
         }
     }
 }

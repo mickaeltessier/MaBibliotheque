@@ -1,31 +1,36 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 
 namespace MaBibliotheque.Models
 {
-    public partial class Author(int id, string firstName, string lastName) : ObservableObject
+    public partial class Author : ObservableObject
     {
-        [ObservableProperty]
         [Key]
-        private int _id = id; // logique qui sera gerer une fois la base de données implémentée
+        public int AuthorId { get; set; }
 
         [ObservableProperty]
-        private string _firstName = firstName;
+        public string _firstName;
 
         [ObservableProperty]
-        private string _lastName = lastName;
+        public string _lastName;
+        public ICollection<Book> Books { get; set; } // navigation inverse
 
-        public override string ToString()
+        public Author() { }
+
+        public Author(string firstName, string lastName)
         {
-            return $"{FirstName} {LastName}";
+            FirstName = firstName;
+            LastName = lastName;
         }
+
+        public override string ToString() => $"{FirstName} {LastName}";
 
         public override bool Equals(object? obj)
         {
             if (obj is Author author)
             {
-                return Id == author.Id &&
-                       FirstName == author.FirstName &&
+                return FirstName == author.FirstName &&
                        LastName == author.LastName;
             }
             return false;
@@ -33,7 +38,7 @@ namespace MaBibliotheque.Models
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(Id, FirstName, LastName);
+            return HashCode.Combine(AuthorId, FirstName, LastName);
         }
     }
 }
