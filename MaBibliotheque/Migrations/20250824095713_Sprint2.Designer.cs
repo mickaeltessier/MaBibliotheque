@@ -2,6 +2,7 @@
 using MaBibliotheque.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -9,9 +10,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MaBibliotheque.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250824095713_Sprint2")]
+    partial class Sprint2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.8");
@@ -80,6 +83,9 @@ namespace MaBibliotheque.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<int>("BookId")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("EditorLine")
                         .HasColumnType("TEXT");
 
@@ -89,7 +95,9 @@ namespace MaBibliotheque.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Publishers");
+                    b.HasIndex("BookId");
+
+                    b.ToTable("Publisher");
                 });
 
             modelBuilder.Entity("MaBibliotheque.Models.Book", b =>
@@ -101,7 +109,7 @@ namespace MaBibliotheque.Migrations
                         .IsRequired();
 
                     b.HasOne("MaBibliotheque.Models.Publisher", "Publisher")
-                        .WithMany("Books")
+                        .WithMany()
                         .HasForeignKey("PublisherId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -111,12 +119,18 @@ namespace MaBibliotheque.Migrations
                     b.Navigation("Publisher");
                 });
 
-            modelBuilder.Entity("MaBibliotheque.Models.Author", b =>
+            modelBuilder.Entity("MaBibliotheque.Models.Publisher", b =>
                 {
-                    b.Navigation("Books");
+                    b.HasOne("MaBibliotheque.Models.Book", "Book")
+                        .WithMany()
+                        .HasForeignKey("BookId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Book");
                 });
 
-            modelBuilder.Entity("MaBibliotheque.Models.Publisher", b =>
+            modelBuilder.Entity("MaBibliotheque.Models.Author", b =>
                 {
                     b.Navigation("Books");
                 });

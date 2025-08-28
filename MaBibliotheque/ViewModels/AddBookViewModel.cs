@@ -17,6 +17,7 @@ namespace MaBibliotheque.ViewModels
         protected Book Book = new
             (
                 new Author(string.Empty, string.Empty),
+                new Publisher(string.Empty, string.Empty),
                 string.Empty,
                 string.Empty,
                 "0000000000",
@@ -45,7 +46,20 @@ namespace MaBibliotheque.ViewModels
             }
         }
 
+        public ObservableCollection<Publisher> Publishers => _libraryService.Publishers;
+
+        [Required(ErrorMessage = "Les informations à propos de l'auteur sont obligatoires")]
+        public Publisher Publisher
+        {
+            get => Book.Publisher;
+            set
+            {
+                SetProperty(Book.Publisher, value, Book, (b, v) => b.Publisher = v, true);
+            }
+        }
+
         [Required(ErrorMessage = "Le titre est obligatoire.")]
+        [RegularExpression(@"^(?!\s)([\w]{1,}[\p{Zs}]{0,1}){1,}(?<!\s)$", ErrorMessage = "Le titre ne doit contenir que des lettres.")]
         public string Title
         {
             get => Book.Title;
@@ -55,7 +69,7 @@ namespace MaBibliotheque.ViewModels
             }
         }
 
-        [Required(ErrorMessage = "Le titre est obligatoire.")]
+        [Required(ErrorMessage = "Le genre est obligatoire.")]
         public string BookType
         {
             get => Book.BookType;
@@ -77,6 +91,7 @@ namespace MaBibliotheque.ViewModels
             }
         }
 
+        [Required(ErrorMessage = "Le prix est obligatoire.")]
         [Range(0, int.MaxValue)]
         public float Price
         {
@@ -104,19 +119,24 @@ namespace MaBibliotheque.ViewModels
 
         public void Initialize(object parameter)
         {
-            if (parameter is Book bookToEdit)
+            switch(parameter)
             {
-                _isEditMode = true;
-                // Copier les valeurs du livre à éditer
-                Author = bookToEdit.Author;
-                BookType = bookToEdit.BookType;
-                Title = bookToEdit.Title;
-                Isbn = bookToEdit.Isbn;
-                Price = bookToEdit.Price;
-                PublishYear = bookToEdit.PublishYear;
+                case Book bookToEdit:
+                    _isEditMode = true;
+                    // Copier les valeurs du livre à éditer
+                    Author = bookToEdit.Author;
+                    BookType = bookToEdit.BookType;
+                    Title = bookToEdit.Title;
+                    Isbn = bookToEdit.Isbn;
+                    Price = bookToEdit.Price;
+                    PublishYear = bookToEdit.PublishYear;
 
-                // Stocker le livre à éditer pour l'utiliser lors de la sauvegarde
-                BookToEdit = bookToEdit;
+                    // Stocker le livre à éditer pour l'utiliser lors de la sauvegarde
+                    BookToEdit = bookToEdit;
+                    break;
+
+                default:
+                    throw new ArgumentException("Le paramètre doit être de type 'Book' ou null.");
             }
         }
 
@@ -124,6 +144,12 @@ namespace MaBibliotheque.ViewModels
         public void OpenAddAuthorView()
         {
             _navigationService.ShowWindow<AddAuthorView>();
+        }
+
+        [RelayCommand]
+        public void OpenAddPublisherView()
+        {
+            _navigationService.ShowWindow<AddPublisherView>();
         }
 
         [RelayCommand]
@@ -138,7 +164,7 @@ namespace MaBibliotheque.ViewModels
                     MessageBox.Show("Aucun livre à éditer n'a été trouvé.", "Erreur", MessageBoxButton.OK, MessageBoxImage.Error);
                     return;
                 }
-                
+
                 if(_libraryService.EditBookAsync(BookToEdit,Book).Result)
                     _navigationService.CloseWindow<AddBookViewModel>();
             }

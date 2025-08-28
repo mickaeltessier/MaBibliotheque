@@ -1,20 +1,28 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace MaBibliotheque.Models
 {
     public partial class Book
     {
+        #region Variables
+
+        #region Gestion ID et Classe dépendante
         [Key]
         public int Id { get; set; }
 
-        // Clé étrangère vers Author
-        public int AuthorId { get; set; }
+        public int AuthorId {  get; set; }
 
         [Required]
         public Author Author { get; set; }
 
+        public int PublisherId { get; set; }
+
+        [Required]
+        public Publisher Publisher { get; set; }
+
+        #endregion
+
+        [Required]
         public string BookType { get; set; } // "Roman", "BD", etc.
 
         [Required]
@@ -26,11 +34,14 @@ namespace MaBibliotheque.Models
 
         public int PublishYear { get; set; }
 
+        #endregion
+
         private Book() { } // Constructeur par défaut pour Entity Framework ou d'autres usages
 
-        public Book(Author author, string bookType, string title, string isbn, float price, int publishYear)
+        public Book(Author author, Publisher publisher, string bookType, string title, string isbn, float price, int publishYear)
         {
             this.Author = author;
+            this.Publisher = publisher;
             this.BookType = bookType;
             this.Title = title;
             this.Isbn = isbn;
@@ -48,6 +59,7 @@ namespace MaBibliotheque.Models
             if (obj is Book book)
             {
                 return Author.Equals(book.Author) &&
+                    Publisher.Equals(book.Publisher) &&
                        BookType == book.BookType &&
                        Title == book.Title &&
                        Isbn == book.Isbn &&
