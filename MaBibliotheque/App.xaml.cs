@@ -48,6 +48,7 @@ namespace MaBibliotheque
             // Ajout des Repository
             services.AddScoped<IRepository<Book>, Repository<Book>>();
             services.AddScoped<IRepository<Author>, Repository<Author>>();
+            services.AddScoped<IRepository<Publisher>, Repository<Publisher>>();
             services.AddScoped<IBookRepository, BookRepository>();
 
             // Ajout des services
@@ -58,11 +59,13 @@ namespace MaBibliotheque
             services.AddTransient<LibraryViewModel>();
             services.AddTransient<AddBookViewModel>();
             services.AddTransient<AddAuthorViewModel>();
+            services.AddTransient<AddPublisherViewModel>();
 
             // Ajout des vues et des sub views
             services.AddTransient<LibraryView>();
             services.AddTransient<AddAuthorView>();
             services.AddTransient<AddBookView>();
+            services.AddTransient<AddPublisherView>();
 
         }
     }

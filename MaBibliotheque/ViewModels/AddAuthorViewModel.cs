@@ -17,7 +17,7 @@ namespace MaBibliotheque.ViewModels
         private readonly INavigationService _navigationService = navigationService;
 
         [Required(ErrorMessage = "Le nom de l'auteur est obligatoire.")]
-        [RegularExpression(@"^[a-zA-Z]+$", ErrorMessage = "Le nom ne doit contenir que des lettres.")]
+        [RegularExpression(@"^(?!\s)([\D]{1,}[\p{Zs}]{0,1}){1,}(?<!\s)$", ErrorMessage = "Le nom ne doit contenir que des lettres.")]
         [Display(Name = "Nom de l'auteur")]
         public string FirstName
         {
@@ -29,7 +29,7 @@ namespace MaBibliotheque.ViewModels
         }
 
         [Required(ErrorMessage = "Le prénom de l'auteur est obligatoire.")]
-        [RegularExpression(@"^[a-zA-Z]+$", ErrorMessage = "Le prénom ne doit contenir que des lettres.")]
+        [RegularExpression(@"^(?!\s)([\D]{1,}[\p{Zs}]{0,1}){1,}(?<!\s)$", ErrorMessage = "Le prénom ne doit contenir que des lettres.")]
         [Display(Name = "Prénom de l'auteur")]
         public string LastName
         {

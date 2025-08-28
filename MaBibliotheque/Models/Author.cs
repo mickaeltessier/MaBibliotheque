@@ -9,11 +9,11 @@ namespace MaBibliotheque.Models
         [Key]
         public int AuthorId { get; set; }
 
-        [ObservableProperty]
-        public string _firstName;
+        [Required]
+        public string FirstName { get; set; }
 
-        [ObservableProperty]
-        public string _lastName;
+        [Required]
+        public string LastName { get; set; }
         public ICollection<Book> Books { get; set; } // navigation inverse
 
         public Author() { }

@@ -32,6 +32,12 @@ namespace MaBibliotheque.ViewModels
         }
 
         [RelayCommand]
+        public void OpenAddPublisherView()
+        {
+            _navigationService.ShowWindow<AddPublisherView>();
+        }
+
+        [RelayCommand]
         private void DeleteBook()
         {
             if (SelectedBook != null)

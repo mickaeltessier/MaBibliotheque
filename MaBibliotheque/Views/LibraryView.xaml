@@ -40,6 +40,8 @@
                 <GridView>
                     <GridViewColumn Header="Titre" DisplayMemberBinding="{Binding Title}" Width="200"/>
                     <GridViewColumn Header="Auteur" DisplayMemberBinding="{Binding Author}" Width="150"/>
+                    <GridViewColumn Header="Editeur" DisplayMemberBinding="{Binding Publisher}" Width="150"/>
+                    <GridViewColumn Header="Genre" DisplayMemberBinding="{Binding BookType}" Width="150"/>
                     <GridViewColumn Header="Année de publication" DisplayMemberBinding="{Binding PublishYear}" Width="150"/>
                 </GridView>
             </ListView.View>

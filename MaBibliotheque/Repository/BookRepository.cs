@@ -18,6 +18,14 @@ namespace MaBibliotheque.Repository
         {
             return _context.Books.Include(b => b.Author).ToList();
         }
+
+        public IEnumerable<Book> GetBooksWithAuthorsAndPublisher()
+        {
+            return _context.Books
+                .Include(b => b.Author)
+                .Include(b => b.Publisher)
+                .ToList();
+        }
     }
 
 }

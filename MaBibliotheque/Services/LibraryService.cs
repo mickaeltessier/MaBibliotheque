@@ -8,22 +8,39 @@ using System.Collections.ObjectModel;
 
 namespace MaBibliotheque.Services
 {
-    public partial class LibraryService(AppDbContext dbContext, IBookRepository bookWithAuthorRepository, IRepository<Book> bookRepository, IRepository<Author> authorRepository) : ObservableObject, ILibraryService
+    public partial class LibraryService(AppDbContext dbContext, IBookRepository bookFullRepository, IRepository<Book> bookRepository, IRepository<Author> authorRepository, IRepository<Publisher> publisherRepository) : ObservableObject, ILibraryService
     {
         private readonly Repository<Book> _bookRepository = (Repository<Book>)bookRepository;
         private readonly Repository<Author> _authorRepository = (Repository<Author>)authorRepository;
+        private readonly Repository<Publisher> _publisherRepository = (Repository<Publisher>)publisherRepository;
 
         private readonly AppDbContext _dbContext = dbContext;
-        private readonly IBookRepository _bookWithAuthorRepository = bookWithAuthorRepository;
+
+        private readonly IBookRepository _bookFullRepository = bookFullRepository;
 
         public ObservableCollection<Book> Books { get; set; } = [];
 
         public ObservableCollection<Author> Authors { get; private set; } = [];
 
+        public ObservableCollection<Publisher> Publishers { get; private set; } = [];
+
         public async void InitializeLibrary()
         {
             await LoadBooksAsync();
             await LoadAuthorsAsync();
+            await LoadPublishersAsync();
+        }
+
+        private async Task LoadPublishersAsync()
+        {
+            var publisherList = _publisherRepository.GetAll();
+            Publishers = new ObservableCollection<Publisher>(publisherList);
+
+            Publishers.Clear();
+            foreach (var publisher in publisherList)
+            {
+                Publishers.Add(publisher);
+            }
         }
 
         private async Task LoadAuthorsAsync()
@@ -53,7 +70,7 @@ namespace MaBibliotheque.Services
 
         public bool BookExists(Book book)
         {
-            return _dbContext.Books.Any(b => b.Equals(book));
+            return _bookRepository.GetAll().Any(b => b.Equals(book));
         }
 
         public async Task<bool> EditBookAsync(Book oldBook,Book newBook)
@@ -79,7 +96,7 @@ namespace MaBibliotheque.Services
 
         public async Task LoadBooksAsync()
         {
-            var booksFromDb = _bookWithAuthorRepository.GetBooksWithAuthors();
+            var booksFromDb = _bookFullRepository.GetBooksWithAuthorsAndPublisher();
 
             Books.Clear();
             foreach (var book in booksFromDb)
@@ -108,7 +125,7 @@ namespace MaBibliotheque.Services
 
         public bool AuthorExists(Author author)
         {
-            return _dbContext.Authors.Any(a => a.Equals(author));
+            return _authorRepository.GetAll().Any(a => a.Equals(author));
         }
 
         // Methode pas encore implémenter
@@ -126,6 +143,21 @@ namespace MaBibliotheque.Services
             _dbContext.SaveChanges();
 
             LoadAuthorsAsync();
+        }
+
+        public async Task<bool> AddPublisherAsync(Publisher publisher)
+        {
+            if (publisher == null || PublisherExists(publisher))
+                return false;
+            _dbContext.Publishers.Add(publisher); // Add the new publisher to the database
+            _dbContext.SaveChanges(); // Save changes to the database
+            await LoadPublishersAsync();
+            return true;
+        }
+
+        public bool PublisherExists(Publisher publisher)
+        {
+            return _publisherRepository.GetAll().Any(p => p.Equals(publisher));
         }
     }
 }
